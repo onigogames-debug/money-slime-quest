@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/money-slime-quest/static/css/main.fc09829a.css",
-    "main.js": "/money-slime-quest/static/js/main.9d109a13.js",
+    "main.js": "/money-slime-quest/static/js/main.fb20c78e.js",
     "service-worker.js": "/money-slime-quest/service-worker.js",
     "index.html": "/money-slime-quest/index.html",
     "main.fc09829a.css.map": "/money-slime-quest/static/css/main.fc09829a.css.map",
-    "main.9d109a13.js.map": "/money-slime-quest/static/js/main.9d109a13.js.map"
+    "main.fb20c78e.js.map": "/money-slime-quest/static/js/main.fb20c78e.js.map"
   },
   "entrypoints": [
     "static/css/main.fc09829a.css",
-    "static/js/main.9d109a13.js"
+    "static/js/main.fb20c78e.js"
   ]
 }
