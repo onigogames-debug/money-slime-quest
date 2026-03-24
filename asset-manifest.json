@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/money-slime-quest/static/css/main.cf890fdb.css",
+    "main.js": "/money-slime-quest/static/js/main.da73671c.js",
+    "static/js/453.9fc40b7a.chunk.js": "/money-slime-quest/static/js/453.9fc40b7a.chunk.js",
+    "index.html": "/money-slime-quest/index.html",
+    "main.cf890fdb.css.map": "/money-slime-quest/static/css/main.cf890fdb.css.map",
+    "main.da73671c.js.map": "/money-slime-quest/static/js/main.da73671c.js.map",
+    "453.9fc40b7a.chunk.js.map": "/money-slime-quest/static/js/453.9fc40b7a.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.cf890fdb.css",
+    "static/js/main.da73671c.js"
+  ]
+}
