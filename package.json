@@ -1,5 +1,6 @@
 {
   "name": "money-slime-quest",
+  "homepage": "https://onigogames-debug.github.io/money-slime-quest/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -15,8 +16,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -38,6 +39,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.27",
+    "gh-pages": "^6.3.0",
     "postcss": "^8.5.8",
     "tailwindcss": "^4.2.2"
   }

@@ -1,84 +1,191 @@
 import React, { useState } from 'react';
+import {
+  STAGE_META,
+  getNextSession,
+} from './QuizEngine';
+import { useProgress } from './useProgress';
 
-// 進化したスライム表示コンポーネント
-const SlimeCard = ({ score }) => {
-  const level = Math.floor(score / 10) + 1;
-  const progress = (score % 10) * 10;
+// Components
+import LoginScreen from './components/LoginScreen';
+import WorldMap from './components/WorldMap';
+import SetSelect from './components/SetSelect';
+import QuizSession from './components/QuizSession';
+import SessionResult from './components/SessionResult';
+import StageClearModal from './components/StageClearModal';
+import AdminDashboard from './components/AdminDashboard';
 
-  return (
-    <div className="bg-white rounded-3xl shadow-lg p-6 mb-8 border-b-8 border-blue-200">
-      <div className="flex flex-col items-center">
-        <div className="relative">
-          <div className="text-8xl mb-4 animate-bounce">💧</div>
-          <div className="absolute -top-2 -right-2 bg-yellow-400 text-white text-xs font-bold px-2 py-1 rounded-full shadow-sm">
-            Lv.{level}
-          </div>
-        </div>
-        <h2 className="text-xl font-black text-gray-700 mb-2">マネースライム</h2>
-        
-        {/* プログレスバー */}
-        <div className="w-full bg-gray-100 rounded-full h-4 overflow-hidden border border-gray-200">
-          <div 
-            className="bg-gradient-to-r from-blue-400 to-cyan-300 h-full transition-all duration-500" 
-            style={{ width: `${progress}%` }}
-          ></div>
-        </div>
-        <p className="text-xs text-gray-400 mt-2 font-bold uppercase tracking-widest">Next Evolution: {10 - (score % 10)} pts</p>
-      </div>
-    </div>
-  );
+const SCREEN = { 
+  LOGIN: 'LOGIN',
+  MAP: 'MAP', 
+  SET_SELECT: 'SET_SELECT', 
+  QUIZ: 'QUIZ', 
+  RESULT: 'RESULT',
+  ADMIN: 'ADMIN'
 };
 
-function App() {
-  const [score, setScore] = useState(0);
+export default function App() {
+  const { 
+    progress, 
+    allAccounts,
+    activeName,
+    completeSet, 
+    advanceTo, 
+    setPlayerName, 
+    markStageAsCelebrated, 
+    deleteAccount,
+    switchAccount,
+    resetAll 
+  } = useProgress();
+  const [screen, setScreen] = useState(() => activeName ? SCREEN.MAP : SCREEN.LOGIN);
+  const [selectedStage, setSelectedStage] = useState(null);
+  const [selectedSet, setSelectedSet] = useState(null);
+  const [sessionScore, setSessionScore] = useState(0);
+  const [showCelebration, setShowCelebration] = useState(null); // { stage, title }
+
+  const meta = selectedStage ? STAGE_META.find(m => m.stage === selectedStage) : null;
+
+  const handleSelectStage = (stage) => {
+    setSelectedStage(stage);
+    setScreen(SCREEN.SET_SELECT);
+  };
+
+  const handleSelectSet = (set) => {
+    setSelectedSet(set);
+    setScreen(SCREEN.QUIZ);
+  };
+
+  const handleSessionEnd = (score) => {
+    setSessionScore(score);
+    completeSet(selectedStage, selectedSet, score);
+    
+    // Check for stage completion (10/10 sets)
+    const completedInStage = Array.from({ length: 10 }, (_, i) => i + 1)
+      .filter(s => {
+        // We include the current set as it might not be in the state yet
+        if (s === selectedSet) return true;
+        return progress.completedSets.has(`${selectedStage}-${s}`);
+      }).length;
+
+    if (completedInStage === 10 && !progress.celebratedStages.has(selectedStage)) {
+      setShowCelebration({ stage: selectedStage, title: meta.title });
+    }
+
+    setScreen(SCREEN.RESULT);
+  };
+
+  const nextSession = selectedStage && selectedSet ? getNextSession(selectedStage, selectedSet) : null;
+
+  const handleNextSession = () => {
+    if (nextSession) {
+      advanceTo(nextSession.stage, nextSession.set);
+      setSelectedStage(nextSession.stage);
+      setSelectedSet(nextSession.set);
+      setScreen(SCREEN.QUIZ);
+    }
+  };
+
+  const handleLogin = (name) => {
+    setPlayerName(name);
+    setScreen(SCREEN.MAP);
+  };
+
+  const handleGoBackToMap = () => setScreen(SCREEN.MAP);
+  const handleGoToSetSelect = () => setScreen(SCREEN.SET_SELECT);
 
   return (
-    <div className="min-h-screen bg-slate-50 py-10 px-4 font-sans antialiased text-slate-900">
-      <div className="max-w-md mx-auto">
-        {/* ヘッダー */}
-        <header className="text-center mb-10">
-          <h1 className="text-4xl font-black tracking-tighter text-blue-600 drop-shadow-sm">
-            MONEY SLIME<br/><span className="text-blue-400 text-2xl font-extrabold">QUEST</span>
-          </h1>
-        </header>
+    <div className="starfield" style={{ minHeight: '100vh', padding: '1.5rem 1rem', position: 'relative' }}>
+      <div style={{ maxWidth: '420px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
 
-        {/* スライム表示 */}
-        <SlimeCard score={score} />
+        {screen === SCREEN.LOGIN && (
+          <LoginScreen onLogin={handleLogin} />
+        )}
 
-        {/* クイズエリア */}
-        <div className="bg-white rounded-3xl shadow-xl p-8 border-2 border-blue-50">
-          <div className="flex justify-between items-center mb-6">
-            <span className="bg-blue-100 text-blue-600 text-xs font-bold px-3 py-1 rounded-full uppercase">Stage 1-1</span>
-            <span className="text-slate-400 text-sm font-medium">Q. 01 / 10</span>
+        {screen === SCREEN.MAP && (
+          <WorldMap 
+            progress={progress} 
+            onSelectStage={handleSelectStage} 
+            onReset={resetAll} 
+          />
+        )}
+
+        {screen === SCREEN.SET_SELECT && selectedStage && (
+          <SetSelect
+            stage={selectedStage}
+            progress={progress}
+            onSelectSet={handleSelectSet}
+            onBack={handleGoBackToMap}
+          />
+        )}
+
+        {screen === SCREEN.QUIZ && selectedStage && selectedSet && (
+          <>
+            <button 
+              onClick={handleGoToSetSelect} 
+              style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontFamily: "'Orbitron', monospace", fontSize: '0.62rem', marginBottom: '0.75rem', letterSpacing: '0.08em', paddingLeft: 0 }}
+            >
+              ← STAGE {selectedStage}
+            </button>
+            <QuizSession
+              key={`${selectedStage}-${selectedSet}`}
+              stage={selectedStage}
+              set={selectedSet}
+              meta={meta}
+              onSessionEnd={handleSessionEnd}
+            />
+          </>
+        )}
+
+        {screen === SCREEN.RESULT && (
+          <SessionResult
+            score={sessionScore}
+            total={10}
+            stage={selectedStage}
+            set={selectedSet}
+            nextSession={nextSession}
+            onNext={handleNextSession}
+            onReplay={() => setScreen(SCREEN.QUIZ)}
+            onMap={handleGoBackToMap}
+          />
+        )}
+
+        {screen === SCREEN.ADMIN && (
+          <AdminDashboard
+            allAccounts={allAccounts}
+            activeName={activeName}
+            onSwitch={(name) => {
+              switchAccount(name);
+              setScreen(SCREEN.MAP);
+            }}
+            onDelete={deleteAccount}
+            onBack={handleGoBackToMap}
+          />
+        )}
+
+        {showCelebration && (
+          <StageClearModal
+            stage={showCelebration.stage}
+            title={showCelebration.title}
+            onNext={() => {
+              markStageAsCelebrated(showCelebration.stage);
+              setShowCelebration(null);
+            }}
+          />
+        )}
+
+        <footer style={{ textAlign: 'center', fontSize: '0.55rem', color: '#1e293b', marginTop: '2rem', fontFamily: "'Orbitron', monospace", letterSpacing: '0.12em' }}>
+          <div 
+            onClick={() => {
+              const pass = window.prompt("Admin Password?");
+              if (pass === 'ONIGO') {
+                setScreen(SCREEN.ADMIN);
+              }
+            }}
+            style={{ cursor: 'pointer', display: 'inline-block', padding: '0.5rem' }}
+          >
+            © 2026 ONIGO GAMES
           </div>
-          
-          <h3 className="text-xl font-bold text-slate-800 leading-snug mb-8">
-            昔々、お金の代わりに交換に使われていた「海の贈り物」は何でしょう？
-          </h3>
-
-          <div className="space-y-4">
-            {["きれいな石", "貝殻", "真珠", "サンゴ"].map((choice, index) => (
-              <button
-                key={index}
-                onClick={() => setScore(score + 1)}
-                className="w-full py-4 px-6 text-left font-bold text-slate-700 bg-white border-2 border-slate-100 rounded-2xl hover:border-blue-400 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 active:scale-95 shadow-sm"
-              >
-                <span className="inline-block w-8 h-8 mr-3 bg-slate-100 rounded-lg text-center leading-8 text-sm group-hover:bg-blue-200">
-                  {index + 1}
-                </span>
-                {choice}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* フッター */}
-        <p className="text-center text-slate-400 text-xs mt-12 font-medium tracking-widest">
-          © 2026 PRIVATE DETECTIVE AGENCY T
-        </p>
+        </footer>
       </div>
     </div>
   );
 }
-
-export default App;

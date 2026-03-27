@@ -1,70 +1,74 @@
-# Getting Started with Create React App
+# Money Slime Quest (マネースライムクエスト)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+1,200問のクイズを通じて、冒険しながらマネーリテラシーを鍛える金融教育RPGアプリです。
 
-## Available Scripts
+## 🌟 主な機能
 
-In the project directory, you can run:
+- **1,200問の膨大なデータベース**: 全12ステージ、各100問のクイズを収録。基礎から応用、税金、投資、起業、哲学まで幅広く網羅。
+- **120段階の動的な進化**: プレイヤーの成長に合わせて、スライムの形状が5レベルごとに物理的に変化（全24種）。Lv.40以降は段階的に強化される「オーラ」を纏います。
+- **最強の「マネーヒーロー」**: レベル120到達時、伝説の「マネーヒーロースライム」へ変容。専用装備（マント、剣、盾）とエフェクトが解放されます。
+- **PWA (Progressive Web App)**: オフライン対応。地下鉄などの電波のない場所でも学習が可能で、スマホのホーム画面にインストールしてアプリとして利用できます。
+- **リプレイ性の向上**: 4択の選択肢が毎回ランダムにシャッフル。
+- **プレミアムなUI/UX**: モダンなネオンカラーとグラスモーフィズムを採用した、スタイリッシュなRPG風デザイン。
 
-### `npm start`
+## 🗺 ステージ構成
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1. **お金の正体**: 歴史と役割
+2. **稼ぐ力の源泉**: 労働と価値提供
+3. **賢い支出と節約**: 家計管理の基礎
+4. **銀行と社会の仕組み**: 金利と信用
+5. **キャッシュフロー基礎**: 資産と負債
+6. **投資の第一歩**: 株式・債券の基礎
+7. **税金と社会保障**: 日本の制度と仕組み
+8. **自己投資とキャリア**: 最大の資産は自分自身
+9. **起業とビジネスモデル**: 価値の創出方法
+10. **不動産と現物資産**: 土地・金の実物資産
+11. **未来のテクノロジー**: Web3・AIと金融の未来
+12. **富の哲学と寄付**: 幸せなお金の使い方
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 📂 プロジェクト構造
 
-### `npm test`
+```bash
+/src
+  /components        # Reactコンポーネント
+    SlimeSVG.js      # 動的に進化するスライム描画
+    WorldMap.js      # 全体の進行を管理するマップ画面
+    QuizSession.js   # クイズ本体のロジック・タイマー
+    StageClearModal.js # ステージ完遂時のお祝い演出
+  /data
+    questions.json   # 1,200問の全データ
+  QuizEngine.js      # クイズのフィルタリング・シャッフルロジック
+  useProgress.js     # ローカルストレージへの進捗保存フック
+  service-worker.js  # オフライン用のキャッシュ制御
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🚀 開発・実行方法
 
-### `npm run build`
+### 開発モードの起動
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+npm start
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 本番用ビルド (PWA)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+npm run build
+```
 
-### `npm run eject`
+### デプロイ (GitHub Pages)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+npm run deploy
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 🛠 技術スタック
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- **Frontend**: React 19 (Hooks, Functional Components)
+- **Styling**: Vanilla CSS (Custom Variable / Animation System)
+- **Logic**: Workbox (PWA), LocalStorage API (Progress Persistence)
+- **Design**: Orbitron & Inter Google Fonts, SVG Animation
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+---
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+© 2026 ONIGO GAMES
